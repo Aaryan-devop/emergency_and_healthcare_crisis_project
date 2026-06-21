@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { PulsingDot } from "./SharedUI";
+import { useSettings } from "../../context/SettingsContext";
 
 // ── Emergency Map ──────────────────────────────────────────────────────
 export function EmergencyMap({ compact = false }: { compact?: boolean }) {
+  let gpsTracking = false;
+  try {
+    const { settings } = useSettings();
+    gpsTracking = settings["GPS Tracking"];
+  } catch (e) {}
+
   const [tick, setTick] = useState(0);
   useEffect(() => {
+    if (!gpsTracking) return;
     const t = setInterval(() => setTick(p => p + 1), 1200);
     return () => clearInterval(t);
-  }, []);
+  }, [gpsTracking]);
 
   const hospitals = [
     { x: 25, y: 35, label: "Metro General", color: "#3B82F6" },
@@ -77,9 +85,9 @@ export function EmergencyMap({ compact = false }: { compact?: boolean }) {
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400" />Ambulance</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" />Blood Bank</span>
       </div>
-      <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/40 backdrop-blur-sm rounded-lg px-2 py-1 text-[10px] text-emerald-400 font-mono">
-        <PulsingDot color="bg-emerald-400" />
-        LIVE
+      <div className={`absolute top-3 right-3 flex items-center gap-1.5 bg-black/40 backdrop-blur-sm rounded-lg px-2 py-1 text-[10px] font-mono ${gpsTracking ? "text-emerald-400" : "text-slate-500"}`}>
+        {gpsTracking && <PulsingDot color="bg-emerald-400" />}
+        {gpsTracking ? "LIVE" : "OFFLINE"}
       </div>
     </div>
   );

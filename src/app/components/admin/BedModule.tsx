@@ -1,10 +1,12 @@
 import { Hospital } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { StatusBadge, GlassCard } from "../shared/SharedUI";
-import { hospitalData, bedPieData } from "../../data/mockData";
+import { bedPieData } from "../../data/mockData";
+import { useData } from "../../api/hooks";
 
 // ── Bed Module ─────────────────────────────────────────────────────────
 export function BedModule() {
+  const { data: hospitalData } = useData('/hospitals');
   const stats = [
     { label: "ICU Available", value: 412, max: 680, color: "#10B981" },
     { label: "ICU Occupied", value: 268, max: 680, color: "#EF4444" },
@@ -67,7 +69,7 @@ export function BedModule() {
               </tr>
             </thead>
             <tbody>
-              {hospitalData.map(h => (
+              {(hospitalData || []).map((h: any) => (
                 <tr key={h.id} className="border-b border-white/3 hover:bg-white/3 transition-colors">
                   <td className="px-4 py-3 text-white font-medium text-xs">{h.name}</td>
                   <td className="px-4 py-3 font-mono text-xs text-emerald-400">{h.icu}</td>

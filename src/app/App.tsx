@@ -3,6 +3,7 @@ import type { View } from "./types";
 import { LoginPage } from "./pages/LoginPage";
 import { AdminPortal } from "./pages/AdminPortal";
 import { UserPortal } from "./pages/UserPortal";
+import { SettingsProvider } from "./context/SettingsContext";
 
 // ── App Root ───────────────────────────────────────────────────────────
 export default function App() {
@@ -22,7 +23,15 @@ export default function App() {
     setIsDark(d => !d);
   }
 
-  if (view === "login") return <LoginPage onLogin={handleLogin} />;
-  if (view === "admin") return <AdminPortal onLogout={() => setView("login")} isDark={isDark} toggleTheme={toggleTheme} />;
-  return <UserPortal onLogout={() => setView("login")} isDark={isDark} toggleTheme={toggleTheme} />;
+  const content = () => {
+    if (view === "login") return <LoginPage onLogin={handleLogin} />;
+    if (view === "admin") return <AdminPortal onLogout={() => setView("login")} isDark={isDark} toggleTheme={toggleTheme} />;
+    return <UserPortal onLogout={() => setView("login")} isDark={isDark} toggleTheme={toggleTheme} />;
+  };
+
+  return (
+    <SettingsProvider>
+      {content()}
+    </SettingsProvider>
+  );
 }

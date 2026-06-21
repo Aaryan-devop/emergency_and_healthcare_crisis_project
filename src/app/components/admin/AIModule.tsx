@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Ambulance, Brain, Droplets, Hospital, Clock, CheckCircle } from "lucide-react";
+import { Ambulance, Brain, Droplets, Hospital, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { GlassCard } from "../shared/SharedUI";
+import { useSettings } from "../../context/SettingsContext";
 
 // ── AI Recommendations ─────────────────────────────────────────────────
 export function AIModule() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const { settings } = useSettings();
+  const aiEnabled = settings["AI Auto-Recommend"];
 
   const suggestions = [
     "Find nearest ICU bed for cardiac emergency",
@@ -38,17 +41,23 @@ export function AIModule() {
       </div>
 
       <GlassCard className="p-5">
+        {!aiEnabled && (
+          <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm rounded-xl flex items-center gap-2">
+            <AlertCircle size={16} /> AI Features are currently disabled in Settings.
+          </div>
+        )}
         <div className="flex gap-3">
           <input value={query} onChange={e => setQuery(e.target.value)}
-            placeholder="Ask about resources, routes, or predictions..."
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-purple-500/50 transition-all" />
-          <button onClick={() => runQuery(query)} disabled={!query}
-            className="px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 disabled:opacity-40 rounded-xl text-white text-sm font-semibold flex items-center gap-2 transition-all">
+            disabled={!aiEnabled}
+            placeholder={aiEnabled ? "Ask about resources, routes, or predictions..." : "Enable AI Auto-Recommend in settings..."}
+            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all" />
+          <button onClick={() => runQuery(query)} disabled={!query || !aiEnabled}
+            className="px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-white text-sm font-semibold flex items-center gap-2 transition-all">
             <Brain size={15} />
             Analyze
           </button>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className={`mt-3 flex flex-wrap gap-2 ${!aiEnabled && 'opacity-50 pointer-events-none'}`}>
           {suggestions.map(s => (
             <button key={s} onClick={() => runQuery(s)}
               className="text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-lg px-3 py-1.5 hover:bg-purple-500/20 transition-colors">

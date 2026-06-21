@@ -1,10 +1,11 @@
 import { Ambulance, Globe, MapPin, Zap, Clock } from "lucide-react";
 import { StatusBadge, PulsingDot, GlassCard } from "../shared/SharedUI";
-import { ambulanceData } from "../../data/mockData";
+import { useData } from "../../api/hooks";
 import { EmergencyMap } from "../shared/EmergencyMap";
 
 // ── Ambulance Module ───────────────────────────────────────────────────
 export function AmbulanceModule() {
+  const { data: ambulanceData } = useData('/ambulances');
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -25,7 +26,7 @@ export function AmbulanceModule() {
           </GlassCard>
         </div>
         <div className="space-y-3">
-          {ambulanceData.map(amb => (
+          {(ambulanceData || []).map((amb: any) => (
             <GlassCard key={amb.id} className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white font-mono font-bold text-sm">{amb.id}</span>

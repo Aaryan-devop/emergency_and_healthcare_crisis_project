@@ -2,11 +2,14 @@ import { useState } from "react";
 import {
   Activity, Ambulance, BedDouble, Brain, Droplets, Filter, Globe, HeartPulse,
   Hospital, LogOut, MapPin, Moon, Phone, Search, Sun, User, Wind, X,
-  Navigation, Flame, MessageSquare,
+  Navigation, Flame, MessageSquare, CheckCircle
 } from "lucide-react";
 import { StatusBadge, PulsingDot, GlassCard } from "../components/shared/SharedUI";
+import { Modal } from "../components/shared/Modal";
 import { EmergencyMap } from "../components/shared/EmergencyMap";
-import { hospitalData, ambulanceData } from "../data/mockData";
+import { useData } from "../api/hooks";
+import { apiClient } from "../api/client";
+import { useSettings } from "../context/SettingsContext";
 
 // ── User Portal ────────────────────────────────────────────────────────
 export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => void; isDark: boolean; toggleTheme: () => void }) {
@@ -14,16 +17,70 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
   const [activeResource, setActiveResource] = useState<string | null>(null);
   const [emergencyMode, setEmergencyMode] = useState(false);
   const [hasResults, setHasResults] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
+
+  const { data: hospitalData } = useData('/hospitals');
+  const { data: ambulanceData } = useData('/ambulances');
+  const { settings } = useSettings();
+
+  // Simulating random emergency alerts if enabled
+  useEffect(() => {
+    let interval: any;
+    if (settings["Emergency Alerts"]) {
+      interval = setInterval(() => {
+        if (Math.random() > 0.7) {
+          setSuccessMsg("CRITICAL ALERT: Multi-vehicle collision on I-95. Requesting immediate blood reserves.");
+          setTimeout(() => setSuccessMsg(""), 6000);
+        }
+      }, 20000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [settings["Emergency Alerts"]]);
 
   function handleSearch(q: string) {
     setSearch(q);
     if (q.length > 0) setHasResults(true);
   }
 
-  function activateEmergency() {
+  async function activateEmergency() {
     setEmergencyMode(true);
     setTimeout(() => setEmergencyMode(false), 8000);
+    try {
+      await apiClient.post('/emergencies', {
+        id: `REQ-${Math.floor(Math.random() * 9000) + 1000}`,
+        patient: "SOS Trigger",
+        type: "Critical Emergency",
+        blood: "Unknown",
+        bed: "ICU",
+        ambulance: true,
+        priority: "critical",
+        status: "active"
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function handleAmbulanceRequest() {
+    try {
+      await apiClient.post('/emergencies', {
+        id: `REQ-${Math.floor(Math.random() * 9000) + 1000}`,
+        patient: "Ambulance Call",
+        type: "Dispatch",
+        blood: null,
+        bed: null,
+        ambulance: true,
+        priority: "high",
+        status: "dispatched"
+      });
+      setSuccessMsg("Nearest ambulance requested successfully! ETA 3 mins.");
+    } catch (e) {
+      alert("Error requesting ambulance.");
+    }
   }
 
   const quickActions = [
@@ -163,33 +220,35 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
                 Results for "{search}"
                 <span className="text-slate-500 font-normal text-sm ml-2">{searchResults.length} facilities found</span>
               </h2>
-              <button className="flex items-center gap-2 text-slate-400 text-sm hover:text-white transition-colors">
+              <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 text-slate-400 text-sm hover:text-white transition-colors">
                 <Filter size={14} />
                 Filter
               </button>
             </div>
 
             {/* AI recommendations banner */}
-            <GlassCard className="p-4 border-purple-500/20 bg-purple-500/5">
-              <div className="flex items-center gap-3 mb-3">
-                <Brain size={18} className="text-purple-400" />
-                <span className="text-white font-semibold text-sm">AI Smart Recommendations</span>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { label: "Best Match", value: "Metro General", sub: "Highest availability", color: "text-purple-400" },
-                  { label: "Nearest", value: "Downtown Trauma", sub: "1.2 km away", color: "text-blue-400" },
-                  { label: "Fastest", value: "AMB-005 · 3 min", sub: "Via Central Ave", color: "text-amber-400" },
-                  { label: "Most Available", value: "Northside Health", sub: "200+ cylinders", color: "text-emerald-400" },
-                ].map(({ label, value, sub, color }) => (
-                  <div key={label} className="bg-white/5 rounded-xl p-3">
-                    <div className="text-slate-500 text-[10px] mb-1">{label}</div>
-                    <div className={`text-sm font-bold ${color}`}>{value}</div>
-                    <div className="text-slate-600 text-[10px] mt-0.5">{sub}</div>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
+            {settings["AI Auto-Recommend"] && (
+              <GlassCard className="p-4 border-purple-500/20 bg-purple-500/5">
+                <div className="flex items-center gap-3 mb-3">
+                  <Brain size={18} className="text-purple-400" />
+                  <span className="text-white font-semibold text-sm">AI Smart Recommendations</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { label: "Best Match", value: "Metro General", sub: "Highest availability", color: "text-purple-400" },
+                    { label: "Nearest", value: "Downtown Trauma", sub: "1.2 km away", color: "text-blue-400" },
+                    { label: "Fastest", value: "AMB-005 · 3 min", sub: "Via Central Ave", color: "text-amber-400" },
+                    { label: "Most Available", value: "Northside Health", sub: "200+ cylinders", color: "text-emerald-400" },
+                  ].map(({ label, value, sub, color }) => (
+                    <div key={label} className="bg-white/5 rounded-xl p-3">
+                      <div className="text-slate-500 text-[10px] mb-1">{label}</div>
+                      <div className={`text-sm font-bold ${color}`}>{value}</div>
+                      <div className="text-slate-600 text-[10px] mt-0.5">{sub}</div>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            )}
 
             <div className="space-y-3">
               {searchResults.map((r, i) => (
@@ -207,15 +266,15 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <button className="p-2 rounded-xl bg-emerald-600/20 border border-emerald-600/30 text-emerald-400 hover:bg-emerald-600/30 transition-all">
+                      <a href={`tel:${r.contact}`} className="p-2 rounded-xl bg-emerald-600/20 border border-emerald-600/30 text-emerald-400 hover:bg-emerald-600/30 transition-all">
                         <Phone size={14} />
-                      </button>
-                      <button className="p-2 rounded-xl bg-blue-600/20 border border-blue-600/30 text-blue-400 hover:bg-blue-600/30 transition-all">
+                      </a>
+                      <a href={`sms:${r.contact}`} className="p-2 rounded-xl bg-blue-600/20 border border-blue-600/30 text-blue-400 hover:bg-blue-600/30 transition-all">
                         <MessageSquare size={14} />
-                      </button>
-                      <button className="p-2 rounded-xl bg-amber-600/20 border border-amber-600/30 text-amber-400 hover:bg-amber-600/30 transition-all">
+                      </a>
+                      <a href={`https://maps.google.com/?q=${encodeURIComponent(r.name)}`} target="_blank" rel="noreferrer" className="p-2 rounded-xl bg-amber-600/20 border border-amber-600/30 text-amber-400 hover:bg-amber-600/30 transition-all">
                         <Navigation size={14} />
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </GlassCard>
@@ -252,7 +311,7 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
                 </div>
               ))}
             </div>
-            <button className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all">
+            <button onClick={handleAmbulanceRequest} className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 transition-all">
               <Ambulance size={15} />
               Request Nearest Ambulance
             </button>
@@ -274,6 +333,37 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
           <span className="text-white text-[8px] font-bold mt-0.5">SOS</span>
         </div>
       </button>
+
+      <Modal isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filter Results">
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-slate-300 block mb-2">Distance</label>
+            <input type="range" className="w-full" min="1" max="50" defaultValue="10" />
+            <div className="flex justify-between text-xs text-slate-500 mt-1"><span>1 km</span><span>50 km</span></div>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-slate-300 block mb-2">Resource Type</label>
+            <div className="flex flex-wrap gap-2">
+              {["Hospital", "Blood Bank", "Oxygen Supplier", "Ambulance Hub"].map(t => (
+                <button key={t} className="px-3 py-1.5 rounded-lg border border-white/10 text-slate-300 text-xs hover:bg-white/5 transition-colors">{t}</button>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end mt-6">
+            <button onClick={() => setIsFilterOpen(false)} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium transition-colors">Apply Filters</button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal isOpen={!!successMsg} onClose={() => setSuccessMsg("")} title={successMsg.includes("CRITICAL ALERT") ? "Emergency Alert" : "Request Confirmed"}>
+        <div className="text-center py-4 space-y-4">
+          <div className={`w-16 h-16 rounded-full border flex items-center justify-center mx-auto ${successMsg.includes("CRITICAL ALERT") ? "bg-red-500/20 border-red-500 text-red-400" : "bg-emerald-500/20 border-emerald-500 text-emerald-400"}`}>
+            {successMsg.includes("CRITICAL ALERT") ? <Activity size={32} /> : <CheckCircle size={32} />}
+          </div>
+          <p className="text-white text-lg font-medium">{successMsg}</p>
+          <button onClick={() => setSuccessMsg("")} className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold transition-colors">Dismiss</button>
+        </div>
+      </Modal>
     </div>
   );
 }

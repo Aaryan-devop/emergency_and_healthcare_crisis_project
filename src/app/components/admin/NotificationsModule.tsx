@@ -1,8 +1,9 @@
 import { AlertTriangle, Bell, BellRing, CheckCircle, AlertCircle } from "lucide-react";
-import { notifications } from "../../data/mockData";
+import { useData } from "../../api/hooks";
 
 // ── Notifications ──────────────────────────────────────────────────────
 export function NotificationsModule() {
+  const { data: notifications } = useData('/notifications');
   const iconMap = {
     critical: { icon: AlertTriangle, color: "text-red-400", bg: "bg-red-500/15 border-red-500/25" },
     warning: { icon: AlertCircle, color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/25" },
@@ -16,8 +17,8 @@ export function NotificationsModule() {
         Notifications
       </h2>
       <div className="space-y-3">
-        {notifications.map(n => {
-          const { icon: Icon, color, bg } = iconMap[n.type as keyof typeof iconMap];
+        {(notifications || []).map((n: any) => {
+          const { icon: Icon, color, bg } = iconMap[n.type as keyof typeof iconMap] || iconMap.info;
           return (
             <div key={n.id} className={`flex items-start gap-4 p-4 rounded-xl border backdrop-blur-sm ${bg}`}>
               <Icon size={18} className={`${color} flex-shrink-0 mt-0.5`} />

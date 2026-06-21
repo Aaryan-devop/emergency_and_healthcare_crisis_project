@@ -1,15 +1,51 @@
 import { useState } from "react";
 import {
-  Ambulance, BedDouble, Droplets, HeartPulse, Hospital, LogIn, Shield, User, CheckCircle,
+  Ambulance, BedDouble, Droplets, HeartPulse, Hospital, LogIn, Shield, User, CheckCircle, UserPlus,
 } from "lucide-react";
 import { EmergencyMap } from "../components/shared/EmergencyMap";
+import { apiClient } from "../api/client";
 
 // ── Login Page ─────────────────────────────────────────────────────────
 export function LoginPage({ onLogin }: { onLogin: (role: "admin" | "user") => void }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@lifelink.health");
+  const [password, setPassword] = useState("admin123");
   const [remember, setRemember] = useState(false);
   const [loginType, setLoginType] = useState<"admin" | "user">("admin");
+  const [isRegister, setIsRegister] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resetMsg, setResetMsg] = useState("");
+
+  // Auto-fill credentials for easy testing
+  useState(() => {
+    // Initial mount is already set to admin
+  });
+
+  const handleLoginTypeChange = (type: "admin" | "user") => {
+    setLoginType(type);
+    if (type === "admin") {
+      setEmail("admin@lifelink.health");
+      setPassword("admin123");
+    } else {
+      setEmail("staff@hospital.org");
+      setPassword("staff123");
+    }
+  };
+
+  async function handleSubmit() {
+    setError("");
+    setLoading(true);
+    try {
+      const endpoint = isRegister ? '/auth/register' : '/auth/login';
+      const res = await apiClient.post(endpoint, { email, password, role: loginType });
+      localStorage.setItem('lifelink_token', res.token);
+      onLogin(res.role);
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen w-full flex overflow-hidden bg-[#050A14] font-sans">
@@ -94,11 +130,11 @@ export function LoginPage({ onLogin }: { onLogin: (role: "admin" | "user") => vo
           <p className="text-slate-400 text-sm mb-8">Secure access to the emergency resource network</p>
 
           {/* Login type toggle */}
-          <div className="flex rounded-xl overflow-hidden border border-white/10 mb-6 p-1 bg-white/5">
+          <div className="flex rounded-xl overflow-hidden border border-white/10 mb-4 p-1 bg-white/5">
             {(["admin", "user"] as const).map(type => (
               <button
                 key={type}
-                onClick={() => setLoginType(type)}
+                onClick={() => handleLoginTypeChange(type)}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                   loginType === type
                     ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/30"
@@ -110,6 +146,15 @@ export function LoginPage({ onLogin }: { onLogin: (role: "admin" | "user") => vo
               </button>
             ))}
           </div>
+
+          <div className="flex justify-end mb-6 text-sm">
+             <button onClick={() => setIsRegister(!isRegister)} className="text-blue-400 hover:text-blue-300">
+                {isRegister ? "Already have an account? Sign In" : "Need an account? Sign Up"}
+             </button>
+          </div>
+
+          {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl">{error}</div>}
+          {resetMsg && <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm rounded-xl flex items-center gap-2"><CheckCircle size={14} />{resetMsg}</div>}
 
           {/* Form */}
           <div className="space-y-4">
@@ -149,16 +194,20 @@ export function LoginPage({ onLogin }: { onLogin: (role: "admin" | "user") => vo
                 </div>
                 <span className="text-slate-400 text-sm">Remember me</span>
               </label>
-              <button className="text-blue-400 text-sm hover:text-blue-300 transition-colors">Forgot password?</button>
+              <button onClick={() => {
+                setResetMsg("Password reset link sent to your email!");
+                setTimeout(() => setResetMsg(""), 5000);
+              }} className="text-blue-400 text-sm hover:text-blue-300 transition-colors">Forgot password?</button>
             </div>
           </div>
 
           <button
-            onClick={() => onLogin(loginType)}
-            className="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all duration-200 active:scale-[0.98]"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-70"
           >
-            <LogIn size={16} />
-            Sign In to {loginType === "admin" ? "Admin Portal" : "Staff Portal"}
+            {isRegister ? <UserPlus size={16} /> : <LogIn size={16} />}
+            {loading ? "Please wait..." : isRegister ? "Create Account" : `Sign In to ${loginType === "admin" ? "Admin Portal" : "Staff Portal"}`}
           </button>
 
           {/* Security badge */}

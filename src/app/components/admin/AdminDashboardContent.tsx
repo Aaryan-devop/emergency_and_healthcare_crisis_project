@@ -2,10 +2,12 @@ import { Activity, AlertTriangle, Ambulance, BedDouble, Droplets, Globe, Hospita
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { StatusBadge, PulsingDot, GlassCard, KpiCard } from "../shared/SharedUI";
 import { EmergencyMap } from "../shared/EmergencyMap";
-import { emergencyRequests, trendData } from "../../data/mockData";
+import { trendData } from "../../data/mockData";
+import { useData } from "../../api/hooks";
 
 // ── Admin Dashboard ────────────────────────────────────────────────────
 export function AdminDashboardContent() {
+  const { data: emergencyRequests } = useData('/emergencies');
   return (
     <div className="p-6 space-y-6">
       {/* KPI grid */}
@@ -43,7 +45,7 @@ export function AdminDashboardContent() {
             Active Emergencies
           </h3>
           <div className="space-y-3">
-            {emergencyRequests.slice(0, 4).map(req => (
+            {(emergencyRequests || []).slice(0, 4).map((req: any) => (
               <div key={req.id} className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
                 <div className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${
                   req.priority === "critical" ? "bg-red-500 animate-pulse" : req.priority === "high" ? "bg-orange-500" : "bg-amber-500"

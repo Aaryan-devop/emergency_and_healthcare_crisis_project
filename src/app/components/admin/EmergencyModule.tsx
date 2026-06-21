@@ -1,9 +1,10 @@
 import { AlertTriangle, Ambulance, CheckCircle, XCircle } from "lucide-react";
 import { StatusBadge, GlassCard } from "../shared/SharedUI";
-import { emergencyRequests } from "../../data/mockData";
+import { useData } from "../../api/hooks";
 
 // ── Emergency Requests ─────────────────────────────────────────────────
 export function EmergencyModule() {
+  const { data: emergencyRequests } = useData('/emergencies');
   return (
     <div className="p-6 space-y-4">
       <div className="flex items-center justify-between">
@@ -12,7 +13,7 @@ export function EmergencyModule() {
           Emergency Requests
         </h2>
         <span className="text-xs font-mono bg-red-500/15 text-red-400 border border-red-500/25 rounded-lg px-3 py-1.5">
-          {emergencyRequests.filter(r => r.status === "active").length} Active
+          {(emergencyRequests || []).filter((r: any) => r.status === "active").length} Active
         </span>
       </div>
       <GlassCard>
@@ -26,7 +27,7 @@ export function EmergencyModule() {
               </tr>
             </thead>
             <tbody>
-              {emergencyRequests.map(req => (
+              {(emergencyRequests || []).map((req: any) => (
                 <tr key={req.id} className={`border-b border-white/3 hover:bg-white/3 transition-colors ${req.status === "active" && req.priority === "critical" ? "bg-red-500/5" : ""}`}>
                   <td className="px-4 py-3 font-mono text-blue-400 text-xs font-semibold">{req.id}</td>
                   <td className="px-4 py-3 text-white text-xs font-medium">{req.patient}</td>
