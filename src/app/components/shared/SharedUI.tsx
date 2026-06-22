@@ -37,7 +37,7 @@ export function GlassCard({ children, className = "", onClick }: { children: Rea
   return (
     <div
       onClick={onClick}
-      className={`backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-xl shadow-black/30 ${className} ${onClick ? "cursor-pointer hover:bg-white/8 transition-all duration-200" : ""}`}
+      className={`backdrop-blur-xl bg-theme-bg-card border border-theme-border rounded-2xl shadow-xl shadow-theme-shadow ${className} ${onClick ? "cursor-pointer hover:bg-theme-bg-card-hover transition-all duration-200" : ""}`}
     >
       {children}
     </div>
@@ -64,8 +64,8 @@ export function KpiCard({ icon: Icon, label, value, delta, color, pulse }: {
         )}
       </div>
       <div>
-        <div className="text-2xl font-bold text-white font-sans tracking-tight">{value}</div>
-        <div className="text-xs text-slate-400 mt-0.5 font-medium">{label}</div>
+        <div className="text-2xl font-bold text-theme-text-primary font-sans tracking-tight">{value}</div>
+        <div className="text-xs text-theme-text-muted mt-0.5 font-medium">{label}</div>
       </div>
     </GlassCard>
   );

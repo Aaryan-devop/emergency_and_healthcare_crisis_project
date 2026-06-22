@@ -6,12 +6,8 @@ export function useData(endpoint: string) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  let realTimeUpdates = false;
-  try {
-    const { settings } = useSettings();
-    realTimeUpdates = settings["Real-time Updates"];
-  } catch (e) {}
+  const { settings } = useSettings();
+  const realTimeUpdates = settings["Real-time Updates"];
 
   const fetchData = async (showLoading = true) => {
     try {

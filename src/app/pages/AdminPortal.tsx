@@ -30,7 +30,7 @@ export function AdminPortal({ onLogout, isDark, toggleTheme }: { onLogout: () =>
     ambulance: <AmbulanceModule />,
     oxygen: (
       <div className="p-6 space-y-4">
-        <h2 className="text-xl font-bold text-white">Oxygen & Equipment Inventory</h2>
+        <h2 className="text-xl font-bold text-theme-text-primary">Oxygen & Equipment Inventory</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[
             { icon: Wind, label: "Oxygen Cylinders", value: 3214, unit: "units", color: "from-cyan-600 to-cyan-800" },
@@ -44,9 +44,9 @@ export function AdminPortal({ onLogout, isDark, toggleTheme }: { onLogout: () =>
               <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-3`}>
                 <Icon size={18} className="text-white" />
               </div>
-              <div className="text-2xl font-bold font-mono text-white">{value.toLocaleString()}</div>
-              <div className="text-slate-500 text-xs mt-0.5">{unit}</div>
-              <div className="text-slate-300 text-sm font-medium mt-2">{label}</div>
+              <div className="text-2xl font-bold font-mono text-theme-text-primary">{value.toLocaleString()}</div>
+              <div className="text-theme-text-muted text-xs mt-0.5">{unit}</div>
+              <div className="text-theme-text-secondary text-sm font-medium mt-2">{label}</div>
             </GlassCard>
           ))}
         </div>
@@ -56,7 +56,7 @@ export function AdminPortal({ onLogout, isDark, toggleTheme }: { onLogout: () =>
     ai: <AIModule />,
     map: (
       <div className="p-6 h-full flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-white">Map Monitoring</h2>
+        <h2 className="text-xl font-bold text-theme-text-primary">Map Monitoring</h2>
         <div className="flex-1 min-h-[500px]">
           <GlassCard className="h-full p-4">
             <EmergencyMap />
@@ -70,18 +70,18 @@ export function AdminPortal({ onLogout, isDark, toggleTheme }: { onLogout: () =>
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050A14] font-sans">
+    <div className="flex h-screen overflow-hidden bg-theme-bg-primary font-sans">
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} collapsed={collapsed} onLogout={onLogout} />
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <header className="h-16 border-b border-white/5 flex items-center justify-between px-5 flex-shrink-0 bg-[#070E1C]/80 backdrop-blur-xl">
+        <header className="h-16 border-b border-theme-border-light flex items-center justify-between px-5 flex-shrink-0 bg-theme-header-bg backdrop-blur-xl">
           <div className="flex items-center gap-3">
-            <button onClick={() => setCollapsed(!collapsed)} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition-all">
+            <button onClick={() => setCollapsed(!collapsed)} className="p-2 rounded-lg text-theme-text-muted hover:text-theme-text-primary hover:bg-theme-bg-card transition-all">
               <Menu size={18} />
             </button>
             <div>
-              <span className="text-white font-semibold capitalize">{activeTab.replace(/-/g, " ")}</span>
-              <span className="text-slate-600 text-xs font-mono ml-2">/ Admin Portal</span>
+              <span className="text-theme-text-primary font-semibold capitalize">{activeTab.replace(/-/g, " ")}</span>
+              <span className="text-theme-text-dim text-xs font-mono ml-2">/ Admin Portal</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -89,10 +89,10 @@ export function AdminPortal({ onLogout, isDark, toggleTheme }: { onLogout: () =>
               <PulsingDot color="bg-emerald-400" />
               <span className="hidden sm:inline">System Online</span>
             </div>
-            <button onClick={toggleTheme} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition-all">
+            <button onClick={toggleTheme} className="p-2 rounded-lg text-theme-text-muted hover:text-theme-text-primary hover:bg-theme-bg-card transition-all">
               {isDark ? <Sun size={17} /> : <Moon size={17} />}
             </button>
-            <button onClick={() => setActiveTab("notifications")} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition-all relative">
+            <button onClick={() => setActiveTab("notifications")} className="p-2 rounded-lg text-theme-text-muted hover:text-theme-text-primary hover:bg-theme-bg-card transition-all relative">
               <Bell size={17} />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
             </button>

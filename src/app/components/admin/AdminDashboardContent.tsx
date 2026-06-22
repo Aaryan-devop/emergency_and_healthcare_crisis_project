@@ -8,6 +8,15 @@ import { useData } from "../../api/hooks";
 // ── Admin Dashboard ────────────────────────────────────────────────────
 export function AdminDashboardContent() {
   const { data: emergencyRequests } = useData('/emergencies');
+
+  const tooltipStyle = {
+    background: "var(--theme-tooltip-bg)",
+    border: "1px solid var(--theme-tooltip-border)",
+    borderRadius: "12px",
+    color: "var(--theme-tooltip-text)",
+    fontSize: "12px",
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* KPI grid */}
@@ -27,11 +36,11 @@ export function AdminDashboardContent() {
         <div className="lg:col-span-2">
           <GlassCard className="p-4 h-full">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-semibold flex items-center gap-2">
+              <h3 className="text-theme-text-primary font-semibold flex items-center gap-2">
                 <Globe size={16} className="text-blue-400" />
                 Live Resource Map
               </h3>
-              <div className="flex items-center gap-2 text-xs text-slate-500 font-mono">
+              <div className="flex items-center gap-2 text-xs text-theme-text-muted font-mono">
                 <PulsingDot />
                 <span>Real-time GPS</span>
               </div>
@@ -40,19 +49,19 @@ export function AdminDashboardContent() {
           </GlassCard>
         </div>
         <GlassCard className="p-4">
-          <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+          <h3 className="text-theme-text-primary font-semibold mb-3 flex items-center gap-2">
             <AlertTriangle size={16} className="text-orange-400" />
             Active Emergencies
           </h3>
           <div className="space-y-3">
             {(emergencyRequests || []).slice(0, 4).map((req: any) => (
-              <div key={req.id} className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
+              <div key={req.id} className="flex items-start gap-3 p-3 rounded-xl bg-theme-bg-card border border-theme-border-light">
                 <div className={`mt-0.5 w-2 h-2 rounded-full flex-shrink-0 ${
                   req.priority === "critical" ? "bg-red-500 animate-pulse" : req.priority === "high" ? "bg-orange-500" : "bg-amber-500"
                 }`} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-white text-xs font-semibold truncate">{req.patient} — {req.type}</div>
-                  <div className="text-slate-500 text-[11px] font-mono mt-0.5">{req.id} · {req.time}</div>
+                  <div className="text-theme-text-primary text-xs font-semibold truncate">{req.patient} — {req.type}</div>
+                  <div className="text-theme-text-muted text-[11px] font-mono mt-0.5">{req.id} · {req.time}</div>
                 </div>
                 <StatusBadge status={req.status} />
               </div>
@@ -64,11 +73,11 @@ export function AdminDashboardContent() {
       {/* Trend chart */}
       <GlassCard className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-white font-semibold flex items-center gap-2">
+          <h3 className="text-theme-text-primary font-semibold flex items-center gap-2">
             <Activity size={16} className="text-blue-400" />
             24-Hour Resource Trend
           </h3>
-          <span className="text-xs text-slate-500 font-mono">Last 24 hours</span>
+          <span className="text-xs text-theme-text-muted font-mono">Last 24 hours</span>
         </div>
         <ResponsiveContainer width="100%" height={180}>
           <AreaChart data={trendData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
@@ -86,10 +95,10 @@ export function AdminDashboardContent() {
                 <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(128,128,128,0.1)" />
             <XAxis dataKey="time" tick={{ fill: "#64748B", fontSize: 11, fontFamily: "JetBrains Mono" }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fill: "#64748B", fontSize: 11, fontFamily: "JetBrains Mono" }} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={{ background: "#0D1830", border: "1px solid rgba(59,130,246,0.2)", borderRadius: "12px", color: "#F0F4FF", fontSize: "12px" }} />
+            <Tooltip contentStyle={tooltipStyle} />
             <Area type="monotone" dataKey="requests" stroke="#EF4444" strokeWidth={2} fill="url(#redGrad)" name="Requests" />
             <Area type="monotone" dataKey="beds" stroke="#3B82F6" strokeWidth={2} fill="url(#blueGrad)" name="Bed %" />
             <Area type="monotone" dataKey="blood" stroke="#10B981" strokeWidth={2} fill="url(#greenGrad)" name="Blood %" />

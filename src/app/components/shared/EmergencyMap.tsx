@@ -4,11 +4,8 @@ import { useSettings } from "../../context/SettingsContext";
 
 // ── Emergency Map ──────────────────────────────────────────────────────
 export function EmergencyMap({ compact = false }: { compact?: boolean }) {
-  let gpsTracking = false;
-  try {
-    const { settings } = useSettings();
-    gpsTracking = settings["GPS Tracking"];
-  } catch (e) {}
+  const { settings } = useSettings();
+  const gpsTracking = settings["GPS Tracking"];
 
   const [tick, setTick] = useState(0);
   useEffect(() => {

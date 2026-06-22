@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Activity, Ambulance, BedDouble, Brain, Droplets, Filter, Globe, HeartPulse,
   Hospital, LogOut, MapPin, Moon, Phone, Search, Sun, User, Wind, X,
@@ -102,7 +102,7 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
   }));
 
   return (
-    <div className={`min-h-screen bg-[#050A14] font-sans ${emergencyMode ? "ring-4 ring-red-500 ring-inset" : ""} transition-all`}>
+    <div className={`min-h-screen bg-theme-bg-primary font-sans ${emergencyMode ? "ring-4 ring-red-500 ring-inset" : ""} transition-all`}>
       {/* Emergency overlay */}
       {emergencyMode && (
         <div className="fixed inset-0 z-50 bg-red-950/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setEmergencyMode(false)}>
@@ -141,22 +141,22 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#070E1C]/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-theme-border-light bg-theme-header-bg backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
               <HeartPulse size={16} className="text-white" />
             </div>
             <div className="hidden sm:block">
-              <span className="text-white font-bold text-sm">LifeLink</span>
+              <span className="text-theme-text-primary font-bold text-sm">LifeLink</span>
               <span className="text-blue-400 text-xs font-mono ml-2">STAFF PORTAL</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={toggleTheme} className="p-2 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition-all">
+            <button onClick={toggleTheme} className="p-2 rounded-lg text-theme-text-muted hover:text-theme-text-primary hover:bg-theme-bg-card transition-all">
               {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-            <button onClick={onLogout} className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white text-sm transition-colors">
+            <button onClick={onLogout} className="flex items-center gap-2 px-3 py-2 text-theme-text-secondary hover:text-theme-text-primary text-sm transition-colors">
               <LogOut size={15} />
               <span className="hidden sm:inline">Sign Out</span>
             </button>
@@ -171,28 +171,28 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
             <PulsingDot color="bg-emerald-400" />
             284 hospitals online · Real-time data
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+          <h1 className="text-3xl md:text-5xl font-bold text-theme-text-primary leading-tight">
             Find Emergency<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Resources Now</span>
           </h1>
-          <p className="text-slate-400 text-base max-w-md mx-auto">Instant access to beds, blood, ambulances, and oxygen across the city network.</p>
+          <p className="text-theme-text-secondary text-base max-w-md mx-auto">Instant access to beds, blood, ambulances, and oxygen across the city network.</p>
           <div className="relative max-w-2xl mx-auto">
-            <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" />
+            <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-theme-text-muted" />
             <input
               value={search}
               onChange={e => handleSearch(e.target.value)}
               placeholder="What emergency resource are you looking for?"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-32 py-4 text-white text-base placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
+              className="w-full bg-theme-bg-input border border-theme-border rounded-2xl pl-12 pr-32 py-4 text-theme-text-primary text-base placeholder:text-theme-text-dim focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all"
             />
             <button className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl text-white text-sm font-semibold hover:from-blue-500 hover:to-blue-600 transition-all flex items-center gap-2">
               <Search size={14} />
               Search
             </button>
           </div>
-          <div className="flex flex-wrap justify-center gap-2 text-xs text-slate-500">
+          <div className="flex flex-wrap justify-center gap-2 text-xs text-theme-text-muted">
             {["O+ Blood", "ICU Bed", "Ventilator", "Ambulance", "Oxygen Cylinder"].map(ex => (
               <button key={ex} onClick={() => handleSearch(ex)}
-                className="bg-white/5 border border-white/8 rounded-lg px-3 py-1.5 hover:text-white hover:bg-white/10 transition-all">
+                className="bg-theme-bg-card border border-theme-border rounded-lg px-3 py-1.5 hover:text-theme-text-primary hover:bg-theme-bg-card-hover transition-all">
                 {ex}
               </button>
             ))}
@@ -203,11 +203,11 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
           {quickActions.map(({ label, icon: Icon, color, query }) => (
             <button key={label} onClick={() => handleSearch(query)}
-              className="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/8 hover:bg-white/8 hover:border-white/15 transition-all duration-200 active:scale-[0.97]">
+              className="group flex flex-col items-center gap-3 p-4 rounded-2xl bg-theme-bg-card border border-theme-border hover:bg-theme-bg-card-hover transition-all duration-200 active:scale-[0.97]">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform`}>
                 <Icon size={20} className="text-white" />
               </div>
-              <span className="text-slate-300 text-xs font-medium">{label}</span>
+              <span className="text-theme-text-secondary text-xs font-medium">{label}</span>
             </button>
           ))}
         </div>
@@ -216,11 +216,11 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
         {hasResults && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-white font-bold text-lg">
+              <h2 className="text-theme-text-primary font-bold text-lg">
                 Results for "{search}"
-                <span className="text-slate-500 font-normal text-sm ml-2">{searchResults.length} facilities found</span>
+                <span className="text-theme-text-muted font-normal text-sm ml-2">{searchResults.length} facilities found</span>
               </h2>
-              <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 text-slate-400 text-sm hover:text-white transition-colors">
+              <button onClick={() => setIsFilterOpen(true)} className="flex items-center gap-2 text-theme-text-secondary text-sm hover:text-theme-text-primary transition-colors">
                 <Filter size={14} />
                 Filter
               </button>
@@ -231,7 +231,7 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
               <GlassCard className="p-4 border-purple-500/20 bg-purple-500/5">
                 <div className="flex items-center gap-3 mb-3">
                   <Brain size={18} className="text-purple-400" />
-                  <span className="text-white font-semibold text-sm">AI Smart Recommendations</span>
+                  <span className="text-theme-text-primary font-semibold text-sm">AI Smart Recommendations</span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
@@ -240,10 +240,10 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
                     { label: "Fastest", value: "AMB-005 · 3 min", sub: "Via Central Ave", color: "text-amber-400" },
                     { label: "Most Available", value: "Northside Health", sub: "200+ cylinders", color: "text-emerald-400" },
                   ].map(({ label, value, sub, color }) => (
-                    <div key={label} className="bg-white/5 rounded-xl p-3">
-                      <div className="text-slate-500 text-[10px] mb-1">{label}</div>
+                    <div key={label} className="bg-theme-bg-card rounded-xl p-3">
+                      <div className="text-theme-text-muted text-[10px] mb-1">{label}</div>
                       <div className={`text-sm font-bold ${color}`}>{value}</div>
-                      <div className="text-slate-600 text-[10px] mt-0.5">{sub}</div>
+                      <div className="text-theme-text-dim text-[10px] mt-0.5">{sub}</div>
                     </div>
                   ))}
                 </div>
@@ -256,13 +256,13 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-white font-semibold text-sm">{r.name}</h3>
+                        <h3 className="text-theme-text-primary font-semibold text-sm">{r.name}</h3>
                         <StatusBadge status={r.status} />
                       </div>
-                      <div className="flex flex-wrap gap-4 text-xs text-slate-400 mt-2">
-                        <span className="flex items-center gap-1"><Droplets size={11} className="text-red-400" />Blood {r.blood}: <span className="text-white font-mono">{r.units} units</span></span>
+                      <div className="flex flex-wrap gap-4 text-xs text-theme-text-secondary mt-2">
+                        <span className="flex items-center gap-1"><Droplets size={11} className="text-red-400" />Blood {r.blood}: <span className="text-theme-text-primary font-mono">{r.units} units</span></span>
                         <span className="flex items-center gap-1"><MapPin size={11} className="text-blue-400" />{r.distance}</span>
-                        <span className="flex items-center gap-1"><Phone size={11} className="text-slate-500" />{r.contact}</span>
+                        <span className="flex items-center gap-1"><Phone size={11} className="text-theme-text-muted" />{r.contact}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
@@ -289,25 +289,25 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
             <GlassCard className="p-4 h-72">
               <div className="flex items-center gap-2 mb-3">
                 <Globe size={15} className="text-blue-400" />
-                <span className="text-white font-semibold text-sm">Nearby Resources Map</span>
+                <span className="text-theme-text-primary font-semibold text-sm">Nearby Resources Map</span>
               </div>
               <EmergencyMap />
             </GlassCard>
           </div>
           <GlassCard className="p-5">
-            <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+            <h3 className="text-theme-text-primary font-semibold mb-4 flex items-center gap-2">
               <Ambulance size={16} className="text-amber-400" />
               Book Ambulance
             </h3>
             <div className="space-y-3 mb-4">
               {ambulanceData.filter(a => a.status === "available").slice(0, 2).map(amb => (
-                <div key={amb.id} className="p-3 bg-white/3 rounded-xl border border-white/5">
+                <div key={amb.id} className="p-3 bg-theme-bg-card rounded-xl border border-theme-border-light">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-white font-mono font-bold text-sm">{amb.id}</span>
+                    <span className="text-theme-text-primary font-mono font-bold text-sm">{amb.id}</span>
                     <span className="text-emerald-400 text-xs font-mono">{amb.eta}</span>
                   </div>
-                  <div className="text-slate-400 text-xs">{amb.driver}</div>
-                  <div className="text-slate-600 text-xs mt-1 flex items-center gap-1"><MapPin size={10} />{amb.location}</div>
+                  <div className="text-theme-text-secondary text-xs">{amb.driver}</div>
+                  <div className="text-theme-text-dim text-xs mt-1 flex items-center gap-1"><MapPin size={10} />{amb.location}</div>
                 </div>
               ))}
             </div>
@@ -337,15 +337,15 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
       <Modal isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} title="Filter Results">
         <div className="space-y-4">
           <div>
-            <label className="text-sm font-medium text-slate-300 block mb-2">Distance</label>
+            <label className="text-sm font-medium text-theme-text-secondary block mb-2">Distance</label>
             <input type="range" className="w-full" min="1" max="50" defaultValue="10" />
-            <div className="flex justify-between text-xs text-slate-500 mt-1"><span>1 km</span><span>50 km</span></div>
+            <div className="flex justify-between text-xs text-theme-text-muted mt-1"><span>1 km</span><span>50 km</span></div>
           </div>
           <div>
-            <label className="text-sm font-medium text-slate-300 block mb-2">Resource Type</label>
+            <label className="text-sm font-medium text-theme-text-secondary block mb-2">Resource Type</label>
             <div className="flex flex-wrap gap-2">
               {["Hospital", "Blood Bank", "Oxygen Supplier", "Ambulance Hub"].map(t => (
-                <button key={t} className="px-3 py-1.5 rounded-lg border border-white/10 text-slate-300 text-xs hover:bg-white/5 transition-colors">{t}</button>
+                <button key={t} className="px-3 py-1.5 rounded-lg border border-theme-border text-theme-text-secondary text-xs hover:bg-theme-bg-card transition-colors">{t}</button>
               ))}
             </div>
           </div>
@@ -360,8 +360,8 @@ export function UserPortal({ onLogout, isDark, toggleTheme }: { onLogout: () => 
           <div className={`w-16 h-16 rounded-full border flex items-center justify-center mx-auto ${successMsg.includes("CRITICAL ALERT") ? "bg-red-500/20 border-red-500 text-red-400" : "bg-emerald-500/20 border-emerald-500 text-emerald-400"}`}>
             {successMsg.includes("CRITICAL ALERT") ? <Activity size={32} /> : <CheckCircle size={32} />}
           </div>
-          <p className="text-white text-lg font-medium">{successMsg}</p>
-          <button onClick={() => setSuccessMsg("")} className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white font-semibold transition-colors">Dismiss</button>
+          <p className="text-theme-text-primary text-lg font-medium">{successMsg}</p>
+          <button onClick={() => setSuccessMsg("")} className="w-full py-3 bg-theme-bg-card hover:bg-theme-bg-card-hover rounded-xl text-theme-text-primary font-semibold transition-colors">Dismiss</button>
         </div>
       </Modal>
     </div>

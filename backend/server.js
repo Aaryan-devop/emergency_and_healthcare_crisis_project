@@ -125,6 +125,58 @@ app.post('/api/emergencies', authenticateToken, (req, res) => {
   });
 });
 
+// --- SETTINGS ROUTES ---
+app.get('/api/settings', authenticateToken, (req, res) => {
+  db.get('SELECT * FROM user_settings WHERE user_id = ?', [req.user.id], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) {
+      // Return defaults if no settings row exists
+      return res.json({
+        "Real-time Updates": true,
+        "Emergency Alerts": true,
+        "GPS Tracking": true,
+        "AI Auto-Recommend": true,
+      });
+    }
+    // Map DB columns to frontend-friendly keys
+    res.json({
+      "Real-time Updates": !!row.realtime_updates,
+      "Emergency Alerts": !!row.emergency_alerts,
+      "GPS Tracking": !!row.gps_tracking,
+      "AI Auto-Recommend": !!row.ai_auto_recommend,
+    });
+  });
+});
+
+app.put('/api/settings', authenticateToken, (req, res) => {
+  const settings = req.body;
+  const realtime = settings["Real-time Updates"] ? 1 : 0;
+  const alerts = settings["Emergency Alerts"] ? 1 : 0;
+  const gps = settings["GPS Tracking"] ? 1 : 0;
+  const ai = settings["AI Auto-Recommend"] ? 1 : 0;
+
+  // Upsert: insert or replace the settings for this user
+  db.run(
+    `INSERT INTO user_settings (user_id, realtime_updates, emergency_alerts, gps_tracking, ai_auto_recommend)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET
+       realtime_updates = excluded.realtime_updates,
+       emergency_alerts = excluded.emergency_alerts,
+       gps_tracking = excluded.gps_tracking,
+       ai_auto_recommend = excluded.ai_auto_recommend`,
+    [req.user.id, realtime, alerts, gps, ai],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({
+        "Real-time Updates": !!realtime,
+        "Emergency Alerts": !!alerts,
+        "GPS Tracking": !!gps,
+        "AI Auto-Recommend": !!ai,
+      });
+    }
+  );
+});
+
 // --- NOTIFICATIONS ROUTES ---
 app.get('/api/notifications', authenticateToken, (req, res) => {
   db.all('SELECT * FROM notifications ORDER BY id DESC LIMIT 20', (err, rows) => {

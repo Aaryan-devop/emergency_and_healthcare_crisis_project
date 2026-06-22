@@ -79,6 +79,16 @@ function initDb() {
       time TEXT
     )`);
 
+    // User settings table
+    db.run(`CREATE TABLE IF NOT EXISTS user_settings (
+      user_id INTEGER PRIMARY KEY,
+      realtime_updates BOOLEAN DEFAULT 1,
+      emergency_alerts BOOLEAN DEFAULT 1,
+      gps_tracking BOOLEAN DEFAULT 1,
+      ai_auto_recommend BOOLEAN DEFAULT 1,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )`);
+
     // Seed data if empty
     db.get('SELECT COUNT(*) as count FROM hospitals', (err, row) => {
       if (row.count === 0) {
@@ -160,6 +170,11 @@ async function seedData() {
   const insertNotif = db.prepare('INSERT INTO notifications (type, message, time) VALUES (?, ?, ?)');
   notifications.forEach(n => insertNotif.run(n.type, n.message, n.time));
   insertNotif.finalize();
+
+  // Seed default settings for users
+  db.run('INSERT INTO user_settings (user_id, realtime_updates, emergency_alerts, gps_tracking, ai_auto_recommend) VALUES (1, 1, 1, 1, 1)');
+  db.run('INSERT INTO user_settings (user_id, realtime_updates, emergency_alerts, gps_tracking, ai_auto_recommend) VALUES (2, 1, 1, 1, 1)');
+
 }
 
 module.exports = db;

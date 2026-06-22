@@ -35,8 +35,8 @@ export function AIModule() {
           <Brain size={18} className="text-white" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">AI Recommendation Engine</h2>
-          <p className="text-slate-500 text-xs">Powered by real-time resource intelligence</p>
+          <h2 className="text-xl font-bold text-theme-text-primary">AI Recommendation Engine</h2>
+          <p className="text-theme-text-muted text-xs">Powered by real-time resource intelligence</p>
         </div>
       </div>
 
@@ -50,7 +50,7 @@ export function AIModule() {
           <input value={query} onChange={e => setQuery(e.target.value)}
             disabled={!aiEnabled}
             placeholder={aiEnabled ? "Ask about resources, routes, or predictions..." : "Enable AI Auto-Recommend in settings..."}
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all" />
+            className="flex-1 bg-theme-bg-input border border-theme-border rounded-xl px-4 py-3 text-theme-text-primary text-sm placeholder:text-theme-text-dim focus:outline-none focus:border-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all" />
           <button onClick={() => runQuery(query)} disabled={!query || !aiEnabled}
             className="px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-white text-sm font-semibold flex items-center gap-2 transition-all">
             <Brain size={15} />
@@ -71,8 +71,8 @@ export function AIModule() {
         <GlassCard className="p-6 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
           <div>
-            <div className="text-white font-semibold">Analyzing emergency data...</div>
-            <div className="text-slate-500 text-xs font-mono mt-0.5">Processing 284 hospitals · 9,320 blood units · 89 ambulances</div>
+            <div className="text-theme-text-primary font-semibold">Analyzing emergency data...</div>
+            <div className="text-theme-text-muted text-xs font-mono mt-0.5">Processing 284 hospitals · 9,320 blood units · 89 ambulances</div>
           </div>
         </GlassCard>
       )}
@@ -81,10 +81,10 @@ export function AIModule() {
         <GlassCard className="p-5 border-purple-500/20">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle size={16} className="text-emerald-400" />
-            <span className="text-white font-semibold text-sm">AI Response</span>
-            <span className="text-xs font-mono text-slate-500 ml-auto">94.7% confidence</span>
+            <span className="text-theme-text-primary font-semibold text-sm">AI Response</span>
+            <span className="text-xs font-mono text-theme-text-muted ml-auto">94.7% confidence</span>
           </div>
-          <p className="text-slate-300 text-sm leading-relaxed">{result}</p>
+          <p className="text-theme-text-secondary text-sm leading-relaxed">{result}</p>
         </GlassCard>
       )}
 
@@ -99,8 +99,8 @@ export function AIModule() {
             <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-3`}>
               <Icon size={16} className="text-white" />
             </div>
-            <div className="text-white text-sm font-semibold mb-1">{label}</div>
-            <div className="text-slate-500 text-xs">{desc}</div>
+            <div className="text-theme-text-primary text-sm font-semibold mb-1">{label}</div>
+            <div className="text-theme-text-muted text-xs">{desc}</div>
           </GlassCard>
         ))}
       </div>

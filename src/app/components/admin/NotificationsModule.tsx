@@ -12,7 +12,7 @@ export function NotificationsModule() {
   };
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-xl font-bold text-white flex items-center gap-2">
+      <h2 className="text-xl font-bold text-theme-text-primary flex items-center gap-2">
         <BellRing size={20} className="text-blue-400" />
         Notifications
       </h2>
@@ -23,8 +23,8 @@ export function NotificationsModule() {
             <div key={n.id} className={`flex items-start gap-4 p-4 rounded-xl border backdrop-blur-sm ${bg}`}>
               <Icon size={18} className={`${color} flex-shrink-0 mt-0.5`} />
               <div className="flex-1 min-w-0">
-                <p className="text-slate-200 text-sm">{n.message}</p>
-                <span className="text-slate-500 text-xs font-mono mt-1 block">{n.time}</span>
+                <p className="text-theme-text-secondary text-sm">{n.message}</p>
+                <span className="text-theme-text-muted text-xs font-mono mt-1 block">{n.time}</span>
               </div>
             </div>
           );

@@ -24,15 +24,15 @@ export function AdminSidebar({
   collapsed: boolean; onLogout: () => void;
 }) {
   return (
-    <aside className={`flex flex-col h-full bg-[#070E1C] border-r border-blue-900/30 transition-all duration-300 ${collapsed ? "w-16" : "w-60"}`}>
+    <aside className={`flex flex-col h-full bg-theme-bg-secondary border-r border-theme-sidebar-border transition-all duration-300 ${collapsed ? "w-16" : "w-60"}`}>
       {/* Logo */}
-      <div className="p-4 border-b border-blue-900/30 flex items-center gap-3 min-h-[64px]">
+      <div className="p-4 border-b border-theme-sidebar-border flex items-center gap-3 min-h-[64px]">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
           <HeartPulse size={18} className="text-white" />
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <div className="text-white font-bold text-sm truncate">LifeLink</div>
+            <div className="text-theme-text-primary font-bold text-sm truncate">LifeLink</div>
             <div className="text-blue-400 text-[10px] font-mono truncate">ADMIN PORTAL</div>
           </div>
         )}
@@ -47,7 +47,7 @@ export function AdminSidebar({
             className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all duration-150 group relative ${
               activeTab === tab
                 ? "bg-blue-600/15 text-blue-400 border-r-2 border-blue-500"
-                : "text-slate-500 hover:text-slate-300 hover:bg-white/3"
+                : "text-theme-text-muted hover:text-theme-text-primary hover:bg-theme-bg-card"
             }`}
           >
             <Icon size={17} className="flex-shrink-0" />
@@ -65,10 +65,10 @@ export function AdminSidebar({
       </nav>
 
       {/* Logout */}
-      <div className="p-3 border-t border-blue-900/30">
+      <div className="p-3 border-t border-theme-sidebar-border">
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-theme-text-muted hover:text-red-400 hover:bg-red-500/10 transition-all text-sm"
         >
           <LogOut size={16} className="flex-shrink-0" />
           {!collapsed && <span className="font-medium">Sign Out</span>}
